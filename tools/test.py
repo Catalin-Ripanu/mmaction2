@@ -2,11 +2,17 @@
 import argparse
 import os
 import os.path as osp
+import torch
 
 from mmengine.config import Config, DictAction
 from mmengine.runner import Runner
 
 from mmaction.registry import RUNNERS
+from mmengine.logging.history_buffer import HistoryBuffer
+
+original_torch_load = torch.load
+torch.load = lambda *args, **kwargs: original_torch_load(*args, **{**kwargs, 'weights_only': False})
+torch.serialization.add_safe_globals([HistoryBuffer])
 
 
 def parse_args():
